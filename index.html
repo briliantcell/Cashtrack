@@ -124,8 +124,8 @@
             font-size: 1.2rem;
         }
 
-        /* Login Screen */
-        #login-screen {
+        /* Password Screen */
+        #password-screen {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -136,7 +136,7 @@
             display: none;
         }
 
-        .login-container {
+        .password-container {
             width: 100%;
             max-width: 400px;
             background: var(--light);
@@ -183,7 +183,7 @@
             font-size: 1rem;
         }
 
-        .password-container {
+        .input-container {
             position: relative;
             margin-bottom: 20px;
         }
@@ -242,47 +242,34 @@
             box-shadow: 0 5px 15px rgba(26, 115, 232, 0.3);
         }
 
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
         }
 
-        .key {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 20px;
-            font-size: 18px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
+        /* Pattern Screen */
+        #pattern-screen {
+            min-height: 100vh;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            color: var(--dark);
+            align-items: center;
+            padding: 20px;
+            background: var(--light);
+            display: none;
         }
 
-        [data-theme="dark"] .key {
-            background: #2d2d2d;
-            border-color: #444;
-            color: var(--dark);
-        }
-
-        .key:hover {
-            background: #e9ecef;
-            transform: scale(1.05);
-        }
-
-        [data-theme="dark"] .key:hover {
-            background: #3d3d3d;
-        }
-
-        .key.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        .pattern-container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
         }
 
         .pattern-hint {
@@ -290,14 +277,80 @@
             color: var(--gray);
             font-size: 14px;
             margin-top: 15px;
+            margin-bottom: 20px;
         }
 
-        .error-message {
-            color: var(--danger);
-            text-align: center;
-            margin-top: 10px;
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .pattern-dot {
+            width: 80px;
+            height: 80px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .pattern-dot {
+            background: #2d2d2d;
+            border-color: #444;
+            color: var(--dark);
+        }
+
+        .pattern-dot:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+
+        [data-theme="dark"] .pattern-dot:hover {
+            background: #3d3d3d;
+        }
+
+        .pattern-dot.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pattern-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .pattern-indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: var(--transition);
+        }
+
+        .pattern-indicator-dot.active {
+            background: var(--primary);
+        }
+
+        .pattern-reset {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
             font-size: 14px;
-            display: none;
+            margin-top: 10px;
+            text-decoration: underline;
         }
 
         /* Main App */
@@ -601,7 +654,7 @@
         }
 
         .chart-placeholder {
-            height: 200px;
+            height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -623,7 +676,8 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .login-container {
+            .password-container,
+            .pattern-container {
                 padding: 20px;
                 margin: 10px;
             }
@@ -649,7 +703,7 @@
             }
             
             .transactions-table th,
-                .transactions-table td {
+            .transactions-table td {
                 padding: 10px 8px;
             }
             
@@ -663,6 +717,11 @@
             
             .export-section {
                 flex-direction: column;
+            }
+            
+            .pattern-dot {
+                width: 70px;
+                height: 70px;
             }
         }
 
@@ -681,8 +740,9 @@
                 font-size: 1.7rem;
             }
             
-            .key {
-                padding: 15px;
+            .pattern-dot {
+                width: 60px;
+                height: 60px;
             }
         }
 
@@ -727,9 +787,9 @@
         <p class="splash-subtitle">Kelola Keuangan dengan Mudah</p>
     </div>
 
-    <!-- Login Screen -->
-    <div id="login-screen">
-        <div class="login-container">
+    <!-- Password Screen -->
+    <div id="password-screen">
+        <div class="password-container">
             <div class="app-header">
                 <div class="app-icon">
                     <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -742,32 +802,64 @@
                     </svg>
                 </div>
                 <h1 class="app-title">CashTrack</h1>
-                <p class="app-subtitle">Kelola keuangan pribadi Anda</p>
+                <p class="app-subtitle">Masukkan kata sandi untuk melanjutkan</p>
             </div>
 
-            <div class="password-container">
+            <div class="input-container">
                 <input type="password" class="password-input" placeholder="Masukkan password" id="password-input">
                 <button type="button" class="toggle-password" id="toggle-password">👁️</button>
             </div>
 
-            <button class="login-btn" onclick="login()">
-                <span>Masuk</span>
+            <button class="login-btn" onclick="checkPassword()">
+                <span>Lanjutkan</span>
             </button>
 
-            <div class="keypad">
-                <div class="key" onclick="addKey(1)">1</div>
-                <div class="key" onclick="addKey(2)">2</div>
-                <div class="key" onclick="addKey(3)">3</div>
-                <div class="key" onclick="addKey(4)">4</div>
-                <div class="key" onclick="addKey(5)">5</div>
-                <div class="key" onclick="addKey(6)">6</div>
-                <div class="key" onclick="addKey(7)">7</div>
-                <div class="key" onclick="addKey(8)">8</div>
-                <div class="key" onclick="addKey(9)">9</div>
+            <div class="error-message" id="password-error">Password salah!</div>
+        </div>
+    </div>
+
+    <!-- Pattern Screen -->
+    <div id="pattern-screen">
+        <div class="pattern-container">
+            <div class="app-header">
+                <div class="app-icon">
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="100" height="100" rx="20" fill="#1a73e8"/>
+                        <path d="M65 35H55V25H45" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M35 65H45V75H55" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M35 40L60 65" stroke="white" stroke-width="3"/>
+                        <path d="M60 35L35 60" stroke="white" stroke-width="3"/>
+                        <rect x="30" y="45" width="40" height="10" rx="2" fill="white"/>
+                    </svg>
+                </div>
+                <h1 class="app-title">CashTrack</h1>
+                <p class="app-subtitle">Masukkan pola untuk masuk</p>
             </div>
 
-            <p class="pattern-hint">Gunakan pola untuk masuk</p>
-            <div class="error-message" id="error-message">Password atau pola salah!</div>
+            <div class="pattern-indicator" id="pattern-indicator">
+                <div class="pattern-indicator-dot"></div>
+                <div class="pattern-indicator-dot"></div>
+                <div class="pattern-indicator-dot"></div>
+                <div class="pattern-indicator-dot"></div>
+            </div>
+
+            <div class="pattern-grid">
+                <div class="pattern-dot" data-key="1">1</div>
+                <div class="pattern-dot" data-key="2">2</div>
+                <div class="pattern-dot" data-key="3">3</div>
+                <div class="pattern-dot" data-key="4">4</div>
+                <div class="pattern-dot" data-key="5">5</div>
+                <div class="pattern-dot" data-key="6">6</div>
+                <div class="pattern-dot" data-key="7">7</div>
+                <div class="pattern-dot" data-key="8">8</div>
+                <div class="pattern-dot" data-key="9">9</div>
+            </div>
+
+            <p class="pattern-hint">Gunakan pola untuk masuk ke aplikasi</p>
+            
+            <button class="pattern-reset" onclick="resetPattern()">Reset Pola</button>
+            
+            <div class="error-message" id="pattern-error">Pola salah!</div>
         </div>
     </div>
 
@@ -877,7 +969,7 @@
                 <div class="chart-placeholder" id="chart-placeholder">
                     Grafik akan ditampilkan di sini
                 </div>
-                <canvas id="finance-chart" width="400" height="200" style="display: none;"></canvas>
+                <canvas id="finance-chart" width="400" height="300" style="display: none;"></canvas>
                 <div id="chart-legend" style="margin-top: 15px; display: none;"></div>
             </div>
         </div>
@@ -887,7 +979,7 @@
         // Data dan state management
         let transactions = JSON.parse(localStorage.getItem('cashTrackTransactions')) || [];
         let currentPattern = [];
-        const correctPattern = [2, 5, 8, 9];
+        const correctPattern = [2, 5, 8, 9]; // Pola diagonal yang simetris
         const correctPassword = "Abid ganteng"; // Password disembunyikan dari user
         let deferredPrompt;
 
@@ -918,6 +1010,12 @@
         function formatCurrency(amount) {
             if (!amount && amount !== 0) return '-';
             return 'Rp ' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        // Format untuk ekspor (dengan titik sebagai pemisah ribuan)
+        function formatCurrencyForExport(amount) {
+            if (!amount && amount !== 0) return '0';
+            return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         }
 
         // Format input mata uang
@@ -953,12 +1051,12 @@
             "categories": ["finance", "productivity"],
             "icons": [
                 {
-                    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiMxYTczZTgiLz48cGF0aCBkPSJNNjUgMzVINTVWMjVINDUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM1IDY1SDQ1Vjc1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA0MEw2MCA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTYwIDM1TDM1IDYwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGgPSIzIi8+PHJlY3QgeD0iMzAiIHk9IjQ1IiB3aWR0aD0iNDAiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==",
+                    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiMxYTczZTgiLz48cGF0aCBkPSJNNjUgMzVINTVWMjVINDUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM1IDY1SDQ1Vjc1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA0MEw2MCA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTYwIDM1TDM1IDYwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiLz48cmVjdCB4PSIzMCIgeT0iNDUiIHdpZHRoPSI0MCIgaGVpZ2h0PSIxMCIgcng9IjIiIGZpbGw9IndoaXRlIi8+PC9zdmc+",
                     "sizes": "192x192",
                     "type": "image/svg+xml"
                 },
                 {
-                    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiMxYTczZTgiLz48cGF0aCBkPSJNNjUgMzVINTVWMjVINDUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM1IDY1SDQ1Vjc1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA0MEw2MCA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTYwIDM1TDM1IDYwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiLz48cmVjdCB4PSIzMCIgeT0iNDUiIHdpZHRoPSI0MCIgaGVpZ2h0PSIxMCIgcng9IjIiIGZpbGw9IndoaXRlIi8+PC9zdmc+",
+                    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiMxYTczZTgiLz48cGF0aCBkPSJNNjUgMzVINTVWMjVINDUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM1IDY1SDQ1Vjc1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA0MEw2MCA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTYwIDM1TDM1IDYwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGgPSIzIi8+PHJlY3QgeD0iMzAiIHk9IjQ1IiB3aWR0aD0iNDAiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==",
                     "sizes": "512x512",
                     "type": "image/svg+xml"
                 }
@@ -976,7 +1074,7 @@
                 document.getElementById('splash-screen').style.opacity = '0';
                 setTimeout(function() {
                     document.getElementById('splash-screen').style.display = 'none';
-                    document.getElementById('login-screen').style.display = 'flex';
+                    document.getElementById('password-screen').style.display = 'flex';
                 }, 500);
             }, 2000);
         });
@@ -1029,14 +1127,42 @@
             this.textContent = type === 'password' ? '👁️' : '🔒';
         });
 
-        // Login functionality - TIDAK ADA PETUNJUK PASSWORD
-        function login() {
+        // Password authentication
+        function checkPassword() {
             const password = document.getElementById('password-input').value;
-            const errorMessage = document.getElementById('error-message');
+            const errorMessage = document.getElementById('password-error');
             
-            if (password === correctPassword && JSON.stringify(currentPattern) === JSON.stringify(correctPattern)) {
+            if (password === correctPassword) {
                 errorMessage.style.display = 'none';
-                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('password-screen').style.display = 'none';
+                document.getElementById('pattern-screen').style.display = 'flex';
+                document.getElementById('pattern-screen').classList.add('slide-up');
+                resetPattern();
+            } else {
+                errorMessage.style.display = 'block';
+                document.getElementById('password-input').value = '';
+            }
+        }
+
+        // Pattern authentication
+        function addPatternKey(key) {
+            if (currentPattern.length < 4) {
+                currentPattern.push(key);
+                updatePatternIndicator();
+                updatePatternDots();
+                
+                if (currentPattern.length === 4) {
+                    checkPattern();
+                }
+            }
+        }
+
+        function checkPattern() {
+            const errorMessage = document.getElementById('pattern-error');
+            
+            if (JSON.stringify(currentPattern) === JSON.stringify(correctPattern)) {
+                errorMessage.style.display = 'none';
+                document.getElementById('pattern-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
                 document.getElementById('main-app').classList.add('slide-up');
                 loadTransactions();
@@ -1044,35 +1170,57 @@
                 renderChart();
             } else {
                 errorMessage.style.display = 'block';
-                currentPattern = [];
-                updateKeypad();
+                setTimeout(() => {
+                    resetPattern();
+                }, 1000);
             }
         }
 
+        function resetPattern() {
+            currentPattern = [];
+            updatePatternIndicator();
+            updatePatternDots();
+            document.getElementById('pattern-error').style.display = 'none';
+        }
+
+        function updatePatternIndicator() {
+            const indicatorDots = document.querySelectorAll('.pattern-indicator-dot');
+            indicatorDots.forEach((dot, index) => {
+                if (index < currentPattern.length) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function updatePatternDots() {
+            document.querySelectorAll('.pattern-dot').forEach(dot => {
+                dot.classList.remove('active');
+            });
+            
+            currentPattern.forEach(key => {
+                document.querySelector(`.pattern-dot[data-key="${key}"]`).classList.add('active');
+            });
+        }
+
+        // Add event listeners to pattern dots
+        document.querySelectorAll('.pattern-dot').forEach(dot => {
+            dot.addEventListener('click', function() {
+                const key = parseInt(this.getAttribute('data-key'));
+                addPatternKey(key);
+            });
+        });
+
         function logout() {
-            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('password-screen').style.display = 'flex';
             document.getElementById('main-app').style.display = 'none';
+            document.getElementById('pattern-screen').style.display = 'none';
             document.getElementById('password-input').value = '';
             document.getElementById('password-input').setAttribute('type', 'password');
             document.getElementById('toggle-password').textContent = '👁️';
-            document.getElementById('error-message').style.display = 'none';
-            currentPattern = [];
-            updateKeypad();
-        }
-
-        function addKey(key) {
-            currentPattern.push(key);
-            if (currentPattern.length > 4) {
-                currentPattern = currentPattern.slice(-4);
-            }
-            updateKeypad();
-        }
-
-        function updateKeypad() {
-            document.querySelectorAll('.key').forEach(key => key.classList.remove('active'));
-            currentPattern.forEach(key => {
-                document.querySelector(`.key:nth-child(${key})`).classList.add('active');
-            });
+            document.getElementById('password-error').style.display = 'none';
+            resetPattern();
         }
 
         // Transaction management
@@ -1206,24 +1354,76 @@
             });
         }
 
-        // Export functionality
+        // Export functionality dengan format mata uang Indonesia
         function exportToCSV() {
-            const headers = ['Tanggal', 'Keterangan', 'Pendapatan', 'Pengeluaran'];
+            const headers = ['Tanggal', 'Keterangan', 'Pendapatan (Rp)', 'Pengeluaran (Rp)'];
             const csvContent = [
                 headers.join(','),
                 ...transactions.map(t => [
                     t.date,
                     `"${t.desc.replace(/"/g, '""')}"`,
-                    t.income,
-                    t.expense
+                    formatCurrencyForExport(t.income),
+                    formatCurrencyForExport(t.expense)
                 ].join(','))
             ].join('\n');
 
-            downloadFile(csvContent, 'cashTrack_transactions.csv', 'text/csv');
+            downloadFile(csvContent, 'cashTrack_transactions.csv', 'text/csv;charset=utf-8;');
         }
 
         function exportToExcel() {
-            exportToCSV(); // Simplified for demo
+            // Untuk Excel, kita akan membuat file HTML table yang bisa dibuka di Excel
+            let htmlContent = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>CashTrack Transactions</title>
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <x:ExcelWorkbook>
+                            <x:ExcelWorksheets>
+                                <x:ExcelWorksheet>
+                                    <x:Name>Transaksi</x:Name>
+                                    <x:WorksheetOptions>
+                                        <x:DisplayGridlines/>
+                                    </x:WorksheetOptions>
+                                </x:ExcelWorksheet>
+                            </x:ExcelWorksheets>
+                        </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
+                </head>
+                <body>
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Keterangan</th>
+                                <th>Pendapatan (Rp)</th>
+                                <th>Pengeluaran (Rp)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            transactions.forEach(t => {
+                htmlContent += `
+                    <tr>
+                        <td>${t.date}</td>
+                        <td>${t.desc}</td>
+                        <td>${formatCurrencyForExport(t.income)}</td>
+                        <td>${formatCurrencyForExport(t.expense)}</td>
+                    </tr>
+                `;
+            });
+            
+            htmlContent += `
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+            
+            downloadFile(htmlContent, 'cashTrack_transactions.xls', 'application/vnd.ms-excel');
         }
 
         function downloadFile(content, filename, type) {
@@ -1236,11 +1436,14 @@
             URL.revokeObjectURL(url);
         }
 
-        // Chart functionality yang lebih baik
+        // Improved Chart functionality dengan visualisasi yang lebih baik
         function renderChart() {
             const ctx = document.getElementById('finance-chart').getContext('2d');
             const placeholder = document.getElementById('chart-placeholder');
             const legend = document.getElementById('chart-legend');
+            
+            // Clear previous chart
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             
             if (transactions.length === 0) {
                 placeholder.style.display = 'flex';
@@ -1250,9 +1453,10 @@
                 return;
             }
             
+            // Group transactions by month
             const monthlyData = {};
             transactions.forEach(t => {
-                const month = t.date.substring(0, 7);
+                const month = t.date.substring(0, 7); // YYYY-MM format
                 if (!monthlyData[month]) {
                     monthlyData[month] = { income: 0, expense: 0, balance: 0 };
                 }
@@ -1273,33 +1477,38 @@
             ctx.canvas.style.display = 'block';
             legend.style.display = 'block';
             
-            // Clear canvas
-            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            
             // Set dimensions
             const width = ctx.canvas.width;
             const height = ctx.canvas.height;
-            const padding = 40;
+            const padding = 50;
             const chartWidth = width - (padding * 2);
             const chartHeight = height - (padding * 2);
             
             // Find max value for scaling
             const maxIncome = Math.max(...Object.values(monthlyData).map(m => m.income));
             const maxExpense = Math.max(...Object.values(monthlyData).map(m => m.expense));
-            const maxValue = Math.max(maxIncome, maxExpense) * 1.2;
+            const maxValue = Math.max(maxIncome, maxExpense, 1000); // Minimum 1000 untuk menghindari grafik kosong
+            
+            // Draw background
+            ctx.fillStyle = document.body.getAttribute('data-theme') === 'dark' ? '#2d2d2d' : '#f8f9fa';
+            ctx.fillRect(0, 0, width, height);
             
             // Draw axes
-            ctx.strokeStyle = '#ccc';
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = document.body.getAttribute('data-theme') === 'dark' ? '#666' : '#ccc';
+            ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(padding, padding);
             ctx.lineTo(padding, height - padding);
             ctx.lineTo(width - padding, height - padding);
             ctx.stroke();
             
-            // Draw grid lines
-            ctx.strokeStyle = '#f0f0f0';
+            // Draw grid lines and Y-axis labels
+            ctx.strokeStyle = document.body.getAttribute('data-theme') === 'dark' ? '#444' : '#f0f0f0';
             ctx.lineWidth = 1;
+            ctx.fillStyle = document.body.getAttribute('data-theme') === 'dark' ? '#b0b0b0' : '#666';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'right';
+            
             const gridLines = 5;
             for (let i = 0; i <= gridLines; i++) {
                 const y = padding + (chartHeight / gridLines) * i;
@@ -1309,10 +1518,8 @@
                 ctx.stroke();
                 
                 // Y-axis labels
-                ctx.fillStyle = '#666';
-                ctx.font = '10px Arial';
-                ctx.textAlign = 'right';
-                ctx.fillText(Math.round(maxValue - (maxValue / gridLines) * i).toLocaleString(), padding - 5, y + 3);
+                const value = Math.round(maxValue - (maxValue / gridLines) * i);
+                ctx.fillText(formatCurrencyForExport(value), padding - 10, y + 4);
             }
             
             // Draw bars
@@ -1331,23 +1538,32 @@
                 ctx.fillRect(x + barWidth * 2, height - padding - expenseHeight, barWidth, expenseHeight);
                 
                 // Month labels
-                ctx.fillStyle = '#666';
-                ctx.font = '10px Arial';
+                ctx.fillStyle = document.body.getAttribute('data-theme') === 'dark' ? '#b0b0b0' : '#666';
+                ctx.font = '12px Arial';
                 ctx.textAlign = 'center';
-                const monthLabel = new Date(month + '-01').toLocaleDateString('id-ID', { month: 'short' });
-                ctx.fillText(monthLabel, x + chartWidth / months.length / 2, height - padding + 15);
+                const monthLabel = new Date(month + '-01').toLocaleDateString('id-ID', { 
+                    month: 'short', 
+                    year: 'numeric' 
+                });
+                ctx.fillText(monthLabel, x + chartWidth / months.length / 2, height - padding + 20);
             });
+            
+            // Draw chart title
+            ctx.fillStyle = document.body.getAttribute('data-theme') === 'dark' ? '#e0e0e0' : '#202124';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Grafik Pendapatan dan Pengeluaran Bulanan', width / 2, 20);
             
             // Update legend
             legend.innerHTML = `
-                <div style="display: flex; justify-content: center; gap: 20px;">
+                <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
                     <div style="display: flex; align-items: center;">
-                        <div style="width: 15px; height: 15px; background: #34a853; margin-right: 5px;"></div>
-                        <span>Pendapatan</span>
+                        <div style="width: 20px; height: 20px; background: #34a853; margin-right: 8px; border-radius: 4px;"></div>
+                        <span style="font-weight: 500;">Pendapatan</span>
                     </div>
                     <div style="display: flex; align-items: center;">
-                        <div style="width: 15px; height: 15px; background: #ea4335; margin-right: 5px;"></div>
-                        <span>Pengeluaran</span>
+                        <div style="width: 20px; height: 20px; background: #ea4335; margin-right: 8px; border-radius: 4px;"></div>
+                        <span style="font-weight: 500;">Pengeluaran</span>
                     </div>
                 </div>
             `;
@@ -1359,12 +1575,19 @@
             const yearSelect = document.getElementById('filter-year');
             const monthSelect = document.getElementById('filter-month');
             
+            // Clear existing options
+            yearSelect.innerHTML = '<option value="">Pilih Tahun</option>';
+            monthSelect.innerHTML = '<option value="">Pilih Bulan</option>';
+            
             for (let year = currentYear - 5; year <= currentYear + 1; year++) {
                 const option = document.createElement('option');
                 option.value = year;
                 option.textContent = year;
                 yearSelect.appendChild(option);
             }
+            
+            // Set current year as default
+            yearSelect.value = currentYear;
             
             const months = [
                 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -1377,6 +1600,10 @@
                 option.textContent = month;
                 monthSelect.appendChild(option);
             });
+            
+            // Set current month as default
+            const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
+            monthSelect.value = currentMonth;
         }
 
         // Initialize app
@@ -1392,4 +1619,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
