@@ -14,6 +14,7 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiMxYTczZTgiLz48cGF0aCBkPSJNNjUgMzVINTVWMjVINDUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM1IDY1SDQ1Vjc1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA0MEw2MCA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTYwIDM1TDM1IDYwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiLz48L3N2Zz4=">
     
     <style>
+        /* CSS yang sama seperti sebelumnya */
         :root {
             --primary: #1a73e8;
             --primary-dark: #0d47a1;
@@ -1056,7 +1057,7 @@
                     "type": "image/svg+xml"
                 },
                 {
-                    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiMxYTczZTgiLz48cGF0aCBkPSJNNjUgMzVINTVWMjVINDUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM1IDY1SDQ1Vjc1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA0MEw2MCA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTYwIDM1TDM1IDYwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGgPSIzIi8+PHJlY3QgeD0iMzAiIHk9IjQ1IiB3aWR0aD0iNDAiIGhlaWdodD0iMTAiIHJ4PSIyIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==",
+                    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiMxYTczZTgiLz48cGF0aCBkPSJNNjUgMzVINTVWMjVINDUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM1IDY1SDQ1Vjc1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA0MEw2MCA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTYwIDM1TDM1IDYwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiLz48cmVjdCB4PSIzMCIgeT0iNDUiIHdpZHRoPSI0MCIgaGVpZ2h0PSIxMCIgcng9IjIiIGZpbGw9IndoaXRlIi8+PC9zdmc+",
                     "sizes": "512x512",
                     "type": "image/svg+xml"
                 }
@@ -1354,16 +1355,40 @@
             });
         }
 
-        // Export functionality dengan format mata uang Indonesia
+        // Fungsi untuk menghitung saldo kumulatif per transaksi
+        function calculateRunningBalance() {
+            // Urutkan transaksi berdasarkan tanggal
+            const sortedTransactions = [...transactions].sort((a, b) => 
+                new Date(a.date) - new Date(b.date)
+            );
+            
+            let runningBalance = 0;
+            const transactionsWithBalance = [];
+            
+            sortedTransactions.forEach(transaction => {
+                runningBalance += transaction.income - transaction.expense;
+                transactionsWithBalance.push({
+                    ...transaction,
+                    balance: runningBalance
+                });
+            });
+            
+            return transactionsWithBalance;
+        }
+
+        // Export functionality dengan format mata uang Indonesia dan saldo
         function exportToCSV() {
-            const headers = ['Tanggal', 'Keterangan', 'Pendapatan (Rp)', 'Pengeluaran (Rp)'];
+            const transactionsWithBalance = calculateRunningBalance();
+            
+            const headers = ['Tanggal', 'Keterangan', 'Pendapatan (Rp)', 'Pengeluaran (Rp)', 'Saldo (Rp)'];
             const csvContent = [
                 headers.join(','),
-                ...transactions.map(t => [
+                ...transactionsWithBalance.map(t => [
                     t.date,
                     `"${t.desc.replace(/"/g, '""')}"`,
                     formatCurrencyForExport(t.income),
-                    formatCurrencyForExport(t.expense)
+                    formatCurrencyForExport(t.expense),
+                    formatCurrencyForExport(t.balance)
                 ].join(','))
             ].join('\n');
 
@@ -1371,6 +1396,8 @@
         }
 
         function exportToExcel() {
+            const transactionsWithBalance = calculateRunningBalance();
+            
             // Untuk Excel, kita akan membuat file HTML table yang bisa dibuka di Excel
             let htmlContent = `
                 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
@@ -1391,8 +1418,34 @@
                         </x:ExcelWorkbook>
                     </xml>
                     <![endif]-->
+                    <style>
+                        table {
+                            border-collapse: collapse;
+                            width: 100%;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f2f2f2;
+                            font-weight: bold;
+                        }
+                        .income {
+                            color: green;
+                        }
+                        .expense {
+                            color: red;
+                        }
+                        .balance {
+                            font-weight: bold;
+                        }
+                    </style>
                 </head>
                 <body>
+                    <h2>Laporan Keuangan CashTrack</h2>
+                    <p>Tanggal Ekspor: ${new Date().toLocaleDateString('id-ID')}</p>
                     <table border="1">
                         <thead>
                             <tr>
@@ -1400,24 +1453,39 @@
                                 <th>Keterangan</th>
                                 <th>Pendapatan (Rp)</th>
                                 <th>Pengeluaran (Rp)</th>
+                                <th>Saldo (Rp)</th>
                             </tr>
                         </thead>
                         <tbody>
             `;
             
-            transactions.forEach(t => {
+            transactionsWithBalance.forEach(t => {
                 htmlContent += `
                     <tr>
                         <td>${t.date}</td>
                         <td>${t.desc}</td>
-                        <td>${formatCurrencyForExport(t.income)}</td>
-                        <td>${formatCurrencyForExport(t.expense)}</td>
+                        <td class="income">${formatCurrencyForExport(t.income)}</td>
+                        <td class="expense">${formatCurrencyForExport(t.expense)}</td>
+                        <td class="balance">${formatCurrencyForExport(t.balance)}</td>
                     </tr>
                 `;
             });
             
+            // Tambahkan total dan saldo akhir
+            const totalIncome = transactions.reduce((sum, t) => sum + t.income, 0);
+            const totalExpense = transactions.reduce((sum, t) => sum + t.expense, 0);
+            const finalBalance = totalIncome - totalExpense;
+            
             htmlContent += `
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2" style="text-align: right; font-weight: bold;">Total:</td>
+                                <td class="income" style="font-weight: bold;">${formatCurrencyForExport(totalIncome)}</td>
+                                <td class="expense" style="font-weight: bold;">${formatCurrencyForExport(totalExpense)}</td>
+                                <td class="balance">${formatCurrencyForExport(finalBalance)}</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </body>
                 </html>
