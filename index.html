@@ -13,6 +13,9 @@
     <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiMxYTczZTgiLz48cGF0aCBkPSJNNjUgMzVINTVWMjVINDUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM1IDY1SDQ1Vjc1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA0MEw2MCA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTYwIDM1TDM1IDYwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiLz48L3N2Zz4=">
     
+    <!-- Tambahkan Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         /* CSS yang sama seperti sebelumnya */
         :root {
@@ -652,6 +655,7 @@
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             margin-bottom: 30px;
+            position: relative;
         }
 
         .chart-placeholder {
@@ -970,8 +974,7 @@
                 <div class="chart-placeholder" id="chart-placeholder">
                     Grafik akan ditampilkan di sini
                 </div>
-                <canvas id="finance-chart" width="400" height="300" style="display: none;"></canvas>
-                <div id="chart-legend" style="margin-top: 15px; display: none;"></div>
+                <canvas id="finance-chart"></canvas>
             </div>
         </div>
     </div>
@@ -983,6 +986,7 @@
         const correctPattern = [2, 5, 8, 9]; // Pola diagonal yang simetris
         const correctPassword = "Abid ganteng"; // Password disembunyikan dari user
         let deferredPrompt;
+        let financeChart = null; // Variabel untuk menyimpan instance Chart.js
 
         // Dark Mode
         const darkModeToggle = document.getElementById('dark-mode-toggle');
@@ -1004,6 +1008,11 @@
                 document.body.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
                 darkModeToggle.textContent = '☀️';
+            }
+            
+            // Update chart theme if exists
+            if (financeChart) {
+                renderChart();
             }
         });
 
@@ -1504,19 +1513,19 @@
             URL.revokeObjectURL(url);
         }
 
-        // Improved Chart functionality dengan visualisasi yang lebih baik
+        // Improved Chart functionality dengan Chart.js
         function renderChart() {
-            const ctx = document.getElementById('finance-chart').getContext('2d');
+            const ctx = document.getElementById('finance-chart');
             const placeholder = document.getElementById('chart-placeholder');
-            const legend = document.getElementById('chart-legend');
             
-            // Clear previous chart
-            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            // Hapus chart sebelumnya jika ada
+            if (financeChart) {
+                financeChart.destroy();
+            }
             
             if (transactions.length === 0) {
                 placeholder.style.display = 'flex';
-                ctx.canvas.style.display = 'none';
-                legend.style.display = 'none';
+                ctx.style.display = 'none';
                 placeholder.innerHTML = 'Tidak ada data untuk ditampilkan dalam grafik';
                 return;
             }
@@ -1536,105 +1545,120 @@
             const months = Object.keys(monthlyData).sort();
             if (months.length === 0) {
                 placeholder.style.display = 'flex';
-                ctx.canvas.style.display = 'none';
-                legend.style.display = 'none';
+                ctx.style.display = 'none';
                 return;
             }
 
             placeholder.style.display = 'none';
-            ctx.canvas.style.display = 'block';
-            legend.style.display = 'block';
+            ctx.style.display = 'block';
             
-            // Set dimensions
-            const width = ctx.canvas.width;
-            const height = ctx.canvas.height;
-            const padding = 50;
-            const chartWidth = width - (padding * 2);
-            const chartHeight = height - (padding * 2);
-            
-            // Find max value for scaling
-            const maxIncome = Math.max(...Object.values(monthlyData).map(m => m.income));
-            const maxExpense = Math.max(...Object.values(monthlyData).map(m => m.expense));
-            const maxValue = Math.max(maxIncome, maxExpense, 1000); // Minimum 1000 untuk menghindari grafik kosong
-            
-            // Draw background
-            ctx.fillStyle = document.body.getAttribute('data-theme') === 'dark' ? '#2d2d2d' : '#f8f9fa';
-            ctx.fillRect(0, 0, width, height);
-            
-            // Draw axes
-            ctx.strokeStyle = document.body.getAttribute('data-theme') === 'dark' ? '#666' : '#ccc';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(padding, padding);
-            ctx.lineTo(padding, height - padding);
-            ctx.lineTo(width - padding, height - padding);
-            ctx.stroke();
-            
-            // Draw grid lines and Y-axis labels
-            ctx.strokeStyle = document.body.getAttribute('data-theme') === 'dark' ? '#444' : '#f0f0f0';
-            ctx.lineWidth = 1;
-            ctx.fillStyle = document.body.getAttribute('data-theme') === 'dark' ? '#b0b0b0' : '#666';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'right';
-            
-            const gridLines = 5;
-            for (let i = 0; i <= gridLines; i++) {
-                const y = padding + (chartHeight / gridLines) * i;
-                ctx.beginPath();
-                ctx.moveTo(padding, y);
-                ctx.lineTo(width - padding, y);
-                ctx.stroke();
-                
-                // Y-axis labels
-                const value = Math.round(maxValue - (maxValue / gridLines) * i);
-                ctx.fillText(formatCurrencyForExport(value), padding - 10, y + 4);
-            }
-            
-            // Draw bars
-            const barWidth = chartWidth / (months.length * 3);
-            months.forEach((month, i) => {
-                const x = padding + (chartWidth / months.length) * i;
-                
-                // Income bar
-                const incomeHeight = (monthlyData[month].income / maxValue) * chartHeight;
-                ctx.fillStyle = '#34a853';
-                ctx.fillRect(x + barWidth, height - padding - incomeHeight, barWidth, incomeHeight);
-                
-                // Expense bar
-                const expenseHeight = (monthlyData[month].expense / maxValue) * chartHeight;
-                ctx.fillStyle = '#ea4335';
-                ctx.fillRect(x + barWidth * 2, height - padding - expenseHeight, barWidth, expenseHeight);
-                
-                // Month labels
-                ctx.fillStyle = document.body.getAttribute('data-theme') === 'dark' ? '#b0b0b0' : '#666';
-                ctx.font = '12px Arial';
-                ctx.textAlign = 'center';
-                const monthLabel = new Date(month + '-01').toLocaleDateString('id-ID', { 
+            // Format bulan untuk label
+            const monthLabels = months.map(month => {
+                const date = new Date(month + '-01');
+                return date.toLocaleDateString('id-ID', { 
                     month: 'short', 
                     year: 'numeric' 
                 });
-                ctx.fillText(monthLabel, x + chartWidth / months.length / 2, height - padding + 20);
             });
             
-            // Draw chart title
-            ctx.fillStyle = document.body.getAttribute('data-theme') === 'dark' ? '#e0e0e0' : '#202124';
-            ctx.font = 'bold 16px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('Grafik Pendapatan dan Pengeluaran Bulanan', width / 2, 20);
+            // Data untuk chart
+            const incomeData = months.map(month => monthlyData[month].income);
+            const expenseData = months.map(month => monthlyData[month].expense);
             
-            // Update legend
-            legend.innerHTML = `
-                <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center;">
-                        <div style="width: 20px; height: 20px; background: #34a853; margin-right: 8px; border-radius: 4px;"></div>
-                        <span style="font-weight: 500;">Pendapatan</span>
-                    </div>
-                    <div style="display: flex; align-items: center;">
-                        <div style="width: 20px; height: 20px; background: #ea4335; margin-right: 8px; border-radius: 4px;"></div>
-                        <span style="font-weight: 500;">Pengeluaran</span>
-                    </div>
-                </div>
-            `;
+            // Tentukan tema untuk chart
+            const isDarkMode = document.body.getAttribute('data-theme') === 'dark';
+            const textColor = isDarkMode ? '#e0e0e0' : '#202124';
+            const gridColor = isDarkMode ? '#444' : '#f0f0f0';
+            const backgroundColor = isDarkMode ? '#2d2d2d' : '#f8f9fa';
+            
+            // Buat chart dengan Chart.js
+            financeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [
+                        {
+                            label: 'Pendapatan',
+                            data: incomeData,
+                            backgroundColor: '#34a853',
+                            borderColor: '#2d924a',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Pengeluaran',
+                            data: expenseData,
+                            backgroundColor: '#ea4335',
+                            borderColor: '#d33426',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Grafik Pendapatan dan Pengeluaran Bulanan',
+                            color: textColor,
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: textColor,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += formatCurrency(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor,
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Atur tinggi chart agar responsif
+            ctx.style.height = '300px';
         }
 
         // Initialize date filters
