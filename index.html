@@ -126,6 +126,33 @@
         .splash-subtitle {
             color: rgba(255,255,255,0.8);
             font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        /* Splash Footer */
+        .splash-footer {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .splash-footer p {
+            margin-bottom: 5px;
+        }
+
+        .splash-footer .version {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .splash-footer .copyright {
+            font-size: 0.8rem;
+            opacity: 0.8;
         }
 
         /* Password Screen */
@@ -362,6 +389,8 @@
             display: none;
             min-height: 100vh;
             background: var(--light);
+            position: relative;
+            padding-bottom: 60px; /* Space for app footer */
         }
 
         .main-header {
@@ -425,6 +454,26 @@
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
+        }
+
+        /* App Footer */
+        .app-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--light);
+            border-top: 1px solid #e0e0e0;
+            padding: 15px 20px;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.85rem;
+            z-index: 99;
+        }
+
+        [data-theme="dark"] .app-footer {
+            border-top-color: #444;
+            background: #1a1a1a;
         }
 
         .balance-card {
@@ -561,26 +610,53 @@
             background: #d33426;
         }
 
-        .filters {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+        /* Filter Section Styles */
+        .filter-section {
+            background: var(--light);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             margin-bottom: 20px;
         }
 
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: var(--dark);
+            display: block;
+        }
+
         .filter-select {
-            padding: 10px 15px;
+            padding: 12px;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             background: var(--light);
             font-size: 14px;
-            min-width: 150px;
+            width: 100%;
             color: var(--dark);
         }
 
         [data-theme="dark"] .filter-select {
             border-color: #444;
             background: #2d2d2d;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
         }
 
         .table-container {
@@ -691,16 +767,14 @@
                 padding: 15px;
             }
             
-            .form-grid {
+            .form-grid,
+            .filter-grid {
                 grid-template-columns: 1fr;
             }
             
-            .filters {
+            .filter-buttons,
+            .form-buttons {
                 flex-direction: column;
-            }
-            
-            .filter-select {
-                min-width: 100%;
             }
             
             .transactions-table {
@@ -716,10 +790,6 @@
                 font-size: 2rem;
             }
             
-            .form-buttons {
-                flex-direction: column;
-            }
-            
             .export-section {
                 flex-direction: column;
             }
@@ -727,6 +797,16 @@
             .pattern-dot {
                 width: 70px;
                 height: 70px;
+            }
+            
+            .splash-footer {
+                bottom: 20px;
+                font-size: 0.8rem;
+            }
+            
+            .app-footer {
+                padding: 12px 15px;
+                font-size: 0.8rem;
             }
         }
 
@@ -748,6 +828,16 @@
             .pattern-dot {
                 width: 60px;
                 height: 60px;
+            }
+            
+            .splash-footer {
+                bottom: 15px;
+                font-size: 0.75rem;
+            }
+            
+            .app-footer {
+                padding: 10px 12px;
+                font-size: 0.75rem;
             }
         }
 
@@ -790,6 +880,13 @@
         </div>
         <h1 class="splash-title">CashTrack</h1>
         <p class="splash-subtitle">Kelola Keuangan dengan Mudah</p>
+        
+        <!-- Splash Footer -->
+        <div class="splash-footer">
+            <p class="version">CashTrack Version 1.0</p>
+            <p>Karya Anak Bangsa – Buatan Indonesia</p>
+            <p class="copyright">© 2025 CashTrack. All Rights Reserved.</p>
+        </div>
     </div>
 
     <!-- Password Screen -->
@@ -921,22 +1018,34 @@
                 </div>
             </div>
 
-            <!-- Filters -->
+            <!-- Filter Section -->
             <h3 class="section-title">Filter Transaksi</h3>
-            <div class="filters">
-                <select class="filter-select" id="filter-period" onchange="filterTransactions()">
-                    <option value="all">Semua Periode</option>
-                    <option value="daily">Harian</option>
-                    <option value="monthly">Bulanan</option>
-                    <option value="yearly">Tahunan</option>
-                </select>
-                <input type="date" class="filter-select" id="filter-date" onchange="filterTransactions()">
-                <select class="filter-select" id="filter-month" onchange="filterTransactions()">
-                    <option value="">Pilih Bulan</option>
-                </select>
-                <select class="filter-select" id="filter-year" onchange="filterTransactions()">
-                    <option value="">Pilih Tahun</option>
-                </select>
+            <div class="filter-section">
+                <div class="filter-grid">
+                    <div>
+                        <label class="filter-label">Tahun</label>
+                        <select class="filter-select" id="filter-year" onchange="filterTransactions()">
+                            <option value="">Semua Tahun</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="filter-label">Bulan</label>
+                        <select class="filter-select" id="filter-month" onchange="filterTransactions()">
+                            <option value="">Semua Bulan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="filter-label">Tanggal</label>
+                        <select class="filter-select" id="filter-day" onchange="filterTransactions()">
+                            <option value="">Semua Tanggal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-buttons">
+                    <button class="btn btn-secondary" onclick="resetFilters()">
+                        <span>🔄</span> Reset Filter
+                    </button>
+                </div>
             </div>
 
             <!-- Export Buttons -->
@@ -977,14 +1086,19 @@
                 <canvas id="finance-chart"></canvas>
             </div>
         </div>
+
+        <!-- App Footer -->
+        <footer class="app-footer">
+            © 2025 CashTrack — Buatan Anak Indonesia 🇮🇩
+        </footer>
     </div>
 
     <script>
         // Data dan state management
         let transactions = JSON.parse(localStorage.getItem('cashTrackTransactions')) || [];
         let currentPattern = [];
-        const correctPattern = [1, 2, 3, 4]; // Pola diagonal yang simetris
-        const correctPassword = "Abid ganteng banget"; // Password disembunyikan dari user
+        const correctPattern = [2, 5, 8, 9]; // Pola diagonal yang simetris
+        const correctPassword = "Abid ganteng"; // Password disembunyikan dari user
         let deferredPrompt;
         let financeChart = null; // Variabel untuk menyimpan instance Chart.js
 
@@ -1178,6 +1292,7 @@
                 loadTransactions();
                 updateBalance();
                 renderChart();
+                initializeFilters();
             } else {
                 errorMessage.style.display = 'block';
                 setTimeout(() => {
@@ -1259,6 +1374,7 @@
             updateBalance();
             renderChart();
             clearForm();
+            updateFilterOptions(); // Update filter options after adding transaction
         }
 
         function editTransaction(id) {
@@ -1273,6 +1389,7 @@
                 saveTransactions();
                 loadTransactions();
                 updateBalance();
+                updateFilterOptions(); // Update filter options after editing transaction
             }
         }
 
@@ -1283,6 +1400,7 @@
                 loadTransactions();
                 updateBalance();
                 renderChart();
+                updateFilterOptions(); // Update filter options after deleting transaction
             }
         }
 
@@ -1328,20 +1446,27 @@
             document.getElementById('total-transactions').textContent = transactions.length;
         }
 
+        // New filter function
         function filterTransactions() {
-            const period = document.getElementById('filter-period').value;
-            const date = document.getElementById('filter-date').value;
-            const month = document.getElementById('filter-month').value;
             const year = document.getElementById('filter-year').value;
+            const month = document.getElementById('filter-month').value;
+            const day = document.getElementById('filter-day').value;
 
             let filtered = transactions;
 
-            if (period === 'daily' && date) {
-                filtered = filtered.filter(t => t.date === date);
-            } else if (period === 'monthly' && month && year) {
-                filtered = filtered.filter(t => t.date.startsWith(`${year}-${month}`));
-            } else if (period === 'yearly' && year) {
+            // Filter by year
+            if (year) {
                 filtered = filtered.filter(t => t.date.startsWith(year));
+            }
+
+            // Filter by month
+            if (month) {
+                filtered = filtered.filter(t => t.date.substring(5, 7) === month);
+            }
+
+            // Filter by day
+            if (day) {
+                filtered = filtered.filter(t => t.date.substring(8, 10) === day);
             }
 
             return filtered;
@@ -1362,6 +1487,219 @@
                 month: '2-digit', 
                 year: 'numeric' 
             });
+        }
+
+        // Initialize filters
+        function initializeFilters() {
+            const yearSelect = document.getElementById('filter-year');
+            const monthSelect = document.getElementById('filter-month');
+            const daySelect = document.getElementById('filter-day');
+            
+            // Clear existing options
+            yearSelect.innerHTML = '<option value="">Semua Tahun</option>';
+            monthSelect.innerHTML = '<option value="">Semua Bulan</option>';
+            daySelect.innerHTML = '<option value="">Semua Tanggal</option>';
+            
+            // Get unique years from transactions
+            const years = [...new Set(transactions.map(t => t.date.substring(0, 4)))].sort();
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            });
+            
+            // Add months
+            const months = [
+                { value: '01', name: 'Januari' },
+                { value: '02', name: 'Februari' },
+                { value: '03', name: 'Maret' },
+                { value: '04', name: 'April' },
+                { value: '05', name: 'Mei' },
+                { value: '06', name: 'Juni' },
+                { value: '07', name: 'Juli' },
+                { value: '08', name: 'Agustus' },
+                { value: '09', name: 'September' },
+                { value: '10', name: 'Oktober' },
+                { value: '11', name: 'November' },
+                { value: '12', name: 'Desember' }
+            ];
+            
+            months.forEach(month => {
+                const option = document.createElement('option');
+                option.value = month.value;
+                option.textContent = month.name;
+                monthSelect.appendChild(option);
+            });
+            
+            // Add days
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement('option');
+                const day = i.toString().padStart(2, '0');
+                option.value = day;
+                option.textContent = i;
+                daySelect.appendChild(option);
+            }
+            
+            // Set current date as default
+            const today = new Date();
+            const currentYear = today.getFullYear().toString();
+            const currentMonth = (today.getMonth() + 1).toString().padStart(2, '0');
+            const currentDay = today.getDate().toString().padStart(2, '0');
+            
+            // Check if current year exists in options
+            if (years.includes(currentYear)) {
+                yearSelect.value = currentYear;
+            }
+            
+            monthSelect.value = currentMonth;
+            daySelect.value = currentDay;
+            
+            // Set transaction date to today
+            document.getElementById('transaction-date').valueAsDate = today;
+        }
+
+        // Update filter options based on transactions
+        function updateFilterOptions() {
+            const yearSelect = document.getElementById('filter-year');
+            const monthSelect = document.getElementById('filter-month');
+            const daySelect = document.getElementById('filter-day');
+            
+            // Get current selections
+            const selectedYear = yearSelect.value;
+            const selectedMonth = monthSelect.value;
+            
+            // Update years
+            const years = [...new Set(transactions.map(t => t.date.substring(0, 4)))].sort();
+            yearSelect.innerHTML = '<option value="">Semua Tahun</option>';
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            });
+            
+            // Restore selected year if it still exists
+            if (selectedYear && years.includes(selectedYear)) {
+                yearSelect.value = selectedYear;
+            }
+            
+            // Update months based on selected year
+            updateMonthOptions();
+            
+            // Update days based on selected year and month
+            updateDayOptions();
+        }
+
+        // Update month options based on selected year
+        function updateMonthOptions() {
+            const yearSelect = document.getElementById('filter-year');
+            const monthSelect = document.getElementById('filter-month');
+            const selectedMonth = monthSelect.value;
+            
+            const selectedYear = yearSelect.value;
+            
+            // Get available months for selected year
+            let availableMonths = [];
+            if (selectedYear) {
+                availableMonths = [...new Set(
+                    transactions
+                        .filter(t => t.date.startsWith(selectedYear))
+                        .map(t => t.date.substring(5, 7))
+                )].sort();
+            } else {
+                availableMonths = [...new Set(transactions.map(t => t.date.substring(5, 7)))].sort();
+            }
+            
+            // Update month options
+            const allMonths = [
+                '01', '02', '03', '04', '05', '06', 
+                '07', '08', '09', '10', '11', '12'
+            ];
+            
+            monthSelect.innerHTML = '<option value="">Semua Bulan</option>';
+            allMonths.forEach(month => {
+                if (!selectedYear || availableMonths.includes(month)) {
+                    const option = document.createElement('option');
+                    option.value = month;
+                    option.textContent = getMonthName(month);
+                    monthSelect.appendChild(option);
+                }
+            });
+            
+            // Restore selected month if it still exists
+            if (selectedMonth && (!selectedYear || availableMonths.includes(selectedMonth))) {
+                monthSelect.value = selectedMonth;
+            }
+        }
+
+        // Update day options based on selected year and month
+        function updateDayOptions() {
+            const yearSelect = document.getElementById('filter-year');
+            const monthSelect = document.getElementById('filter-month');
+            const daySelect = document.getElementById('filter-day');
+            const selectedDay = daySelect.value;
+            
+            const selectedYear = yearSelect.value;
+            const selectedMonth = monthSelect.value;
+            
+            // Get available days for selected year and month
+            let availableDays = [];
+            if (selectedYear && selectedMonth) {
+                availableDays = [...new Set(
+                    transactions
+                        .filter(t => t.date.startsWith(`${selectedYear}-${selectedMonth}`))
+                        .map(t => t.date.substring(8, 10))
+                )].sort();
+            } else if (selectedYear) {
+                availableDays = [...new Set(
+                    transactions
+                        .filter(t => t.date.startsWith(selectedYear))
+                        .map(t => t.date.substring(8, 10))
+                )].sort();
+            } else if (selectedMonth) {
+                availableDays = [...new Set(
+                    transactions
+                        .filter(t => t.date.substring(5, 7) === selectedMonth)
+                        .map(t => t.date.substring(8, 10))
+                )].sort();
+            } else {
+                availableDays = [...new Set(transactions.map(t => t.date.substring(8, 10)))].sort();
+            }
+            
+            // Update day options
+            daySelect.innerHTML = '<option value="">Semua Tanggal</option>';
+            for (let i = 1; i <= 31; i++) {
+                const day = i.toString().padStart(2, '0');
+                if (availableDays.length === 0 || availableDays.includes(day)) {
+                    const option = document.createElement('option');
+                    option.value = day;
+                    option.textContent = i;
+                    daySelect.appendChild(option);
+                }
+            }
+            
+            // Restore selected day if it still exists
+            if (selectedDay && (availableDays.length === 0 || availableDays.includes(selectedDay))) {
+                daySelect.value = selectedDay;
+            }
+        }
+
+        // Get month name from number
+        function getMonthName(monthNumber) {
+            const months = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            return months[parseInt(monthNumber) - 1];
+        }
+
+        // Reset all filters
+        function resetFilters() {
+            document.getElementById('filter-year').value = '';
+            document.getElementById('filter-month').value = '';
+            document.getElementById('filter-day').value = '';
+            loadTransactions();
         }
 
         // Fungsi untuk menghitung saldo kumulatif per transaksi
@@ -1661,48 +1999,23 @@
             ctx.style.height = '300px';
         }
 
-        // Initialize date filters
-        function initializeFilters() {
-            const currentYear = new Date().getFullYear();
-            const yearSelect = document.getElementById('filter-year');
-            const monthSelect = document.getElementById('filter-month');
-            
-            // Clear existing options
-            yearSelect.innerHTML = '<option value="">Pilih Tahun</option>';
-            monthSelect.innerHTML = '<option value="">Pilih Bulan</option>';
-            
-            for (let year = currentYear - 5; year <= currentYear + 1; year++) {
-                const option = document.createElement('option');
-                option.value = year;
-                option.textContent = year;
-                yearSelect.appendChild(option);
-            }
-            
-            // Set current year as default
-            yearSelect.value = currentYear;
-            
-            const months = [
-                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-            ];
-            
-            months.forEach((month, index) => {
-                const option = document.createElement('option');
-                option.value = (index + 1).toString().padStart(2, '0');
-                option.textContent = month;
-                monthSelect.appendChild(option);
-            });
-            
-            // Set current month as default
-            const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
-            monthSelect.value = currentMonth;
-        }
-
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
-            initializeFilters();
-            document.getElementById('filter-date').valueAsDate = new Date();
-            document.getElementById('transaction-date').valueAsDate = new Date();
+            // Add event listeners for filter updates
+            document.getElementById('filter-year').addEventListener('change', function() {
+                updateMonthOptions();
+                updateDayOptions();
+                loadTransactions();
+            });
+            
+            document.getElementById('filter-month').addEventListener('change', function() {
+                updateDayOptions();
+                loadTransactions();
+            });
+            
+            document.getElementById('filter-day').addEventListener('change', function() {
+                loadTransactions();
+            });
             
             // Cek apakah aplikasi sudah diinstal
             if (window.matchMedia('(display-mode: standalone)').matches) {
