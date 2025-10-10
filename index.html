@@ -1101,6 +1101,7 @@
         const correctPassword = "Abid ganteng"; // Password disembunyikan dari user
         let deferredPrompt;
         let financeChart = null; // Variabel untuk menyimpan instance Chart.js
+        let filteredTransactions = []; // Menyimpan transaksi yang sudah difilter
 
         // Dark Mode
         const darkModeToggle = document.getElementById('dark-mode-toggle');
@@ -1419,14 +1420,15 @@
             const tbody = document.getElementById('transactions-body');
             tbody.innerHTML = '';
 
-            const filteredTransactions = filterTransactions();
+            // Gunakan filteredTransactions yang sudah dihitung
+            const transactionsToShow = filteredTransactions.length > 0 ? filteredTransactions : transactions;
 
-            if (filteredTransactions.length === 0) {
+            if (transactionsToShow.length === 0) {
                 const row = document.createElement('tr');
                 row.innerHTML = `<td colspan="5" style="text-align: center; padding: 30px; color: var(--gray);">Belum ada transaksi</td>`;
                 tbody.appendChild(row);
             } else {
-                filteredTransactions.forEach(transaction => {
+                transactionsToShow.forEach(transaction => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${formatDate(transaction.date)}</td>
@@ -1443,10 +1445,10 @@
             }
 
             document.getElementById('last-update').textContent = new Date().toLocaleString('id-ID');
-            document.getElementById('total-transactions').textContent = transactions.length;
+            document.getElementById('total-transactions').textContent = transactionsToShow.length;
         }
 
-        // New filter function
+        // New filter function - PERBAIKAN: Simpan hasil filter ke variabel global
         function filterTransactions() {
             const year = document.getElementById('filter-year').value;
             const month = document.getElementById('filter-month').value;
@@ -1469,12 +1471,23 @@
                 filtered = filtered.filter(t => t.date.substring(8, 10) === day);
             }
 
+            // Simpan hasil filter ke variabel global
+            filteredTransactions = filtered;
+            
+            // Update tampilan
+            loadTransactions();
+            updateBalance();
+            renderChart();
+            
             return filtered;
         }
 
         function updateBalance() {
-            const totalIncome = transactions.reduce((sum, t) => sum + t.income, 0);
-            const totalExpense = transactions.reduce((sum, t) => sum + t.expense, 0);
+            // Gunakan filteredTransactions untuk menghitung saldo
+            const transactionsToCalculate = filteredTransactions.length > 0 ? filteredTransactions : transactions;
+            
+            const totalIncome = transactionsToCalculate.reduce((sum, t) => sum + t.income, 0);
+            const totalExpense = transactionsToCalculate.reduce((sum, t) => sum + t.expense, 0);
             const balance = totalIncome - totalExpense;
 
             document.getElementById('balance-amount').textContent = formatCurrency(balance);
@@ -1557,6 +1570,9 @@
             
             // Set transaction date to today
             document.getElementById('transaction-date').valueAsDate = today;
+            
+            // Apply initial filter
+            filterTransactions();
         }
 
         // Update filter options based on transactions
@@ -1589,6 +1605,9 @@
             
             // Update days based on selected year and month
             updateDayOptions();
+            
+            // Apply filter setelah update options
+            filterTransactions();
         }
 
         // Update month options based on selected year
@@ -1699,13 +1718,16 @@
             document.getElementById('filter-year').value = '';
             document.getElementById('filter-month').value = '';
             document.getElementById('filter-day').value = '';
+            filteredTransactions = []; // Reset filtered transactions
             loadTransactions();
+            updateBalance();
+            renderChart();
         }
 
-        // Fungsi untuk menghitung saldo kumulatif per transaksi
-        function calculateRunningBalance() {
+        // Fungsi untuk menghitung saldo kumulatif per transaksi - PERBAIKAN: Gunakan data yang difilter
+        function calculateRunningBalance(transactionsToUse) {
             // Urutkan transaksi berdasarkan tanggal
-            const sortedTransactions = [...transactions].sort((a, b) => 
+            const sortedTransactions = [...transactionsToUse].sort((a, b) => 
                 new Date(a.date) - new Date(b.date)
             );
             
@@ -1723,12 +1745,30 @@
             return transactionsWithBalance;
         }
 
-        // Export functionality dengan format mata uang Indonesia dan saldo
+        // Export functionality dengan format mata uang Indonesia dan saldo - PERBAIKAN: Gunakan data yang difilter
         function exportToCSV() {
-            const transactionsWithBalance = calculateRunningBalance();
+            // Gunakan filteredTransactions jika ada, jika tidak gunakan semua transaksi
+            const transactionsToExport = filteredTransactions.length > 0 ? filteredTransactions : transactions;
+            const transactionsWithBalance = calculateRunningBalance(transactionsToExport);
+            
+            // Dapatkan informasi filter untuk judul
+            const year = document.getElementById('filter-year').value;
+            const month = document.getElementById('filter-month').value;
+            const day = document.getElementById('filter-day').value;
+            
+            let filterInfo = 'Semua Data';
+            if (year || month || day) {
+                filterInfo = 'Data Terfilter';
+                if (year) filterInfo += ` - Tahun ${year}`;
+                if (month) filterInfo += ` - Bulan ${getMonthName(month)}`;
+                if (day) filterInfo += ` - Tanggal ${day}`;
+            }
             
             const headers = ['Tanggal', 'Keterangan', 'Pendapatan (Rp)', 'Pengeluaran (Rp)', 'Saldo (Rp)'];
             const csvContent = [
+                `Laporan Keuangan CashTrack - ${filterInfo}`,
+                `Tanggal Ekspor: ${new Date().toLocaleDateString('id-ID')}`,
+                '',
                 headers.join(','),
                 ...transactionsWithBalance.map(t => [
                     t.date,
@@ -1739,11 +1779,26 @@
                 ].join(','))
             ].join('\n');
 
-            downloadFile(csvContent, 'cashTrack_transactions.csv', 'text/csv;charset=utf-8;');
+            downloadFile(csvContent, `cashTrack_${getExportFilename()}.csv`, 'text/csv;charset=utf-8;');
         }
 
         function exportToExcel() {
-            const transactionsWithBalance = calculateRunningBalance();
+            // Gunakan filteredTransactions jika ada, jika tidak gunakan semua transaksi
+            const transactionsToExport = filteredTransactions.length > 0 ? filteredTransactions : transactions;
+            const transactionsWithBalance = calculateRunningBalance(transactionsToExport);
+            
+            // Dapatkan informasi filter untuk judul
+            const year = document.getElementById('filter-year').value;
+            const month = document.getElementById('filter-month').value;
+            const day = document.getElementById('filter-day').value;
+            
+            let filterInfo = 'Semua Data';
+            if (year || month || day) {
+                filterInfo = 'Data Terfilter';
+                if (year) filterInfo += ` - Tahun ${year}`;
+                if (month) filterInfo += ` - Bulan ${getMonthName(month)}`;
+                if (day) filterInfo += ` - Tanggal ${day}`;
+            }
             
             // Untuk Excel, kita akan membuat file HTML table yang bisa dibuka di Excel
             let htmlContent = `
@@ -1792,6 +1847,7 @@
                 </head>
                 <body>
                     <h2>Laporan Keuangan CashTrack</h2>
+                    <h3>${filterInfo}</h3>
                     <p>Tanggal Ekspor: ${new Date().toLocaleDateString('id-ID')}</p>
                     <table border="1">
                         <thead>
@@ -1819,8 +1875,8 @@
             });
             
             // Tambahkan total dan saldo akhir
-            const totalIncome = transactions.reduce((sum, t) => sum + t.income, 0);
-            const totalExpense = transactions.reduce((sum, t) => sum + t.expense, 0);
+            const totalIncome = transactionsToExport.reduce((sum, t) => sum + t.income, 0);
+            const totalExpense = transactionsToExport.reduce((sum, t) => sum + t.expense, 0);
             const finalBalance = totalIncome - totalExpense;
             
             htmlContent += `
@@ -1838,7 +1894,22 @@
                 </html>
             `;
             
-            downloadFile(htmlContent, 'cashTrack_transactions.xls', 'application/vnd.ms-excel');
+            downloadFile(htmlContent, `cashTrack_${getExportFilename()}.xls`, 'application/vnd.ms-excel');
+        }
+
+        // Helper function untuk nama file ekspor berdasarkan filter
+        function getExportFilename() {
+            const year = document.getElementById('filter-year').value;
+            const month = document.getElementById('filter-month').value;
+            const day = document.getElementById('filter-day').value;
+            
+            let filename = 'transactions';
+            
+            if (year) filename += `_${year}`;
+            if (month) filename += `_${getMonthName(month)}`;
+            if (day) filename += `_${day}`;
+            
+            return filename;
         }
 
         function downloadFile(content, filename, type) {
@@ -1851,7 +1922,7 @@
             URL.revokeObjectURL(url);
         }
 
-        // Improved Chart functionality dengan Chart.js
+        // Improved Chart functionality dengan Chart.js - PERBAIKAN: Gunakan data yang difilter
         function renderChart() {
             const ctx = document.getElementById('finance-chart');
             const placeholder = document.getElementById('chart-placeholder');
@@ -1861,27 +1932,66 @@
                 financeChart.destroy();
             }
             
-            if (transactions.length === 0) {
+            // Gunakan filteredTransactions untuk grafik
+            const transactionsForChart = filteredTransactions.length > 0 ? filteredTransactions : transactions;
+            
+            if (transactionsForChart.length === 0) {
                 placeholder.style.display = 'flex';
                 ctx.style.display = 'none';
                 placeholder.innerHTML = 'Tidak ada data untuk ditampilkan dalam grafik';
                 return;
             }
             
-            // Group transactions by month
-            const monthlyData = {};
-            transactions.forEach(t => {
-                const month = t.date.substring(0, 7); // YYYY-MM format
-                if (!monthlyData[month]) {
-                    monthlyData[month] = { income: 0, expense: 0, balance: 0 };
+            // Dapatkan informasi filter untuk judul grafik
+            const year = document.getElementById('filter-year').value;
+            const month = document.getElementById('filter-month').value;
+            const day = document.getElementById('filter-day').value;
+            
+            let chartTitle = 'Grafik Pendapatan dan Pengeluaran';
+            if (year) chartTitle += ` Tahun ${year}`;
+            if (month) chartTitle += ` Bulan ${getMonthName(month)}`;
+            if (day) chartTitle += ` Tanggal ${day}`;
+            
+            // Tentukan grouping berdasarkan filter yang aktif
+            let groupBy = 'month'; // default
+            let dateFormat = 'YYYY-MM';
+            
+            if (day) {
+                groupBy = 'day';
+                dateFormat = 'YYYY-MM-DD';
+            } else if (month) {
+                groupBy = 'day';
+                dateFormat = 'YYYY-MM-DD';
+            } else if (year) {
+                groupBy = 'month';
+                dateFormat = 'YYYY-MM';
+            } else {
+                groupBy = 'month';
+                dateFormat = 'YYYY-MM';
+            }
+            
+            // Group transactions berdasarkan periode yang sesuai
+            const periodData = {};
+            transactionsForChart.forEach(t => {
+                let period;
+                if (groupBy === 'day') {
+                    period = t.date; // YYYY-MM-DD
+                } else if (groupBy === 'month') {
+                    period = t.date.substring(0, 7); // YYYY-MM
+                } else {
+                    period = t.date.substring(0, 4); // YYYY
                 }
-                monthlyData[month].income += t.income;
-                monthlyData[month].expense += t.expense;
-                monthlyData[month].balance = monthlyData[month].income - monthlyData[month].expense;
+                
+                if (!periodData[period]) {
+                    periodData[period] = { income: 0, expense: 0, balance: 0 };
+                }
+                periodData[period].income += t.income;
+                periodData[period].expense += t.expense;
+                periodData[period].balance = periodData[period].income - periodData[period].expense;
             });
 
-            const months = Object.keys(monthlyData).sort();
-            if (months.length === 0) {
+            const periods = Object.keys(periodData).sort();
+            if (periods.length === 0) {
                 placeholder.style.display = 'flex';
                 ctx.style.display = 'none';
                 return;
@@ -1890,18 +2000,28 @@
             placeholder.style.display = 'none';
             ctx.style.display = 'block';
             
-            // Format bulan untuk label
-            const monthLabels = months.map(month => {
-                const date = new Date(month + '-01');
-                return date.toLocaleDateString('id-ID', { 
-                    month: 'short', 
-                    year: 'numeric' 
-                });
+            // Format periode untuk label
+            const periodLabels = periods.map(period => {
+                if (groupBy === 'day') {
+                    const date = new Date(period);
+                    return date.toLocaleDateString('id-ID', { 
+                        day: '2-digit', 
+                        month: 'short'
+                    });
+                } else if (groupBy === 'month') {
+                    const date = new Date(period + '-01');
+                    return date.toLocaleDateString('id-ID', { 
+                        month: 'short', 
+                        year: 'numeric' 
+                    });
+                } else {
+                    return period;
+                }
             });
             
             // Data untuk chart
-            const incomeData = months.map(month => monthlyData[month].income);
-            const expenseData = months.map(month => monthlyData[month].expense);
+            const incomeData = periods.map(period => periodData[period].income);
+            const expenseData = periods.map(period => periodData[period].expense);
             
             // Tentukan tema untuk chart
             const isDarkMode = document.body.getAttribute('data-theme') === 'dark';
@@ -1913,7 +2033,7 @@
             financeChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: monthLabels,
+                    labels: periodLabels,
                     datasets: [
                         {
                             label: 'Pendapatan',
@@ -1937,7 +2057,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Grafik Pendapatan dan Pengeluaran Bulanan',
+                            text: chartTitle,
                             color: textColor,
                             font: {
                                 size: 16,
@@ -2005,16 +2125,16 @@
             document.getElementById('filter-year').addEventListener('change', function() {
                 updateMonthOptions();
                 updateDayOptions();
-                loadTransactions();
+                filterTransactions();
             });
             
             document.getElementById('filter-month').addEventListener('change', function() {
                 updateDayOptions();
-                loadTransactions();
+                filterTransactions();
             });
             
             document.getElementById('filter-day').addEventListener('change', function() {
-                loadTransactions();
+                filterTransactions();
             });
             
             // Cek apakah aplikasi sudah diinstal
